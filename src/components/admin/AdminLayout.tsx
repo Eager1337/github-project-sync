@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from "@/lib/router-compat";
 import {
   LayoutDashboard, FolderOpen, ShoppingCart, BarChart3, Settings, Users,
   Package, LogOut, Layers, Sparkles, Bell, Images, CalendarClock, Boxes, Menu, X,

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "@/lib/router-compat";
 import { motion } from 'framer-motion';
 import { 
   Plus, Edit, Trash2, Star, Upload, Package, Image, Video,

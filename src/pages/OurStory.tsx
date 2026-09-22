@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Diamond, Heart, ShieldCheck, Truck, Award, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from "@/lib/router-compat";
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 

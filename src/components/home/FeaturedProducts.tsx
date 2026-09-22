@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link } from "@/lib/router-compat";
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from './ProductCard';

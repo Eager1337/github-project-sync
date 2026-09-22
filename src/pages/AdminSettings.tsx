@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from "@/lib/router-compat";
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, FolderOpen, ShoppingCart, BarChart3, Settings, Users,

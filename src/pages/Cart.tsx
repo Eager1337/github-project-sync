@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Minus, Plus, Trash2, ArrowLeft, MessageCircle } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "@/lib/router-compat";
 import { useCart } from '@/contexts/CartContext';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';

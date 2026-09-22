@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link } from "@/lib/router-compat";
 import { ChevronRight, Play, Pause, Volume2, VolumeX, Download, Smartphone, Monitor } from 'lucide-react';
 import FloatingDiamonds from '../3d/FloatingDiamonds';
 import Product3DMockup from './Product3DMockup';

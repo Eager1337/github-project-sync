@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from "@/lib/router-compat";
 import { motion } from 'framer-motion';
 import { ArrowLeft, Star, ShieldCheck, Heart, Share2, ChevronLeft, ChevronRight, ShoppingBag, Minus, Plus, MessageCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from "@/lib/router-compat";
 
 const KEY = 'haamkay_welcomed';
 

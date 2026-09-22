@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { ShieldCheck, Star, ShoppingBag } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from "@/lib/router-compat";
 import { useCart } from '@/contexts/CartContext';
 
 interface ProductCardProps {

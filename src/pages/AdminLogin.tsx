@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "@/lib/router-compat";
 import { motion } from 'framer-motion';
 import { Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';

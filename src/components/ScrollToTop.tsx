@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "@/lib/router-compat";
 
 /** Resets scroll position on every route change so navigation never feels "stuck". */
 const ScrollToTop = () => {

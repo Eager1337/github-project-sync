@@ -1,0 +1,16 @@
+{
+  "name": "Haamkay Enterprises",
+  "short_name": "Haamkay",
+  "description": "Shop fashion, shoes, electronics and accessories in Sierra Leone. Order in a tap.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0d",
+  "theme_color": "#0b0b0d",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

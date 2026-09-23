@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from "@/lib/router-compat";
 import { motion } from 'framer-motion';
@@ -77,7 +78,7 @@ const AdminDashboard = () => {
         contentType: file.type,
       });
       if (!error) {
-        const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+        const data = { publicUrl: await mediaUrl(path) };
         urls.push(data.publicUrl);
       } else {
         toast.error(`Failed to upload ${file.name}: ${error.message}`);

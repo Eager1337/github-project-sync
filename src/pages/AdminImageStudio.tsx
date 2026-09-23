@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useEffect, useRef, useState } from 'react';
 import { Sparkles, Wand2, Upload, Loader2, Check, Film, Camera } from 'lucide-react';
 import { toast } from 'sonner';
@@ -44,7 +45,7 @@ const AdminImageStudio = () => {
     const path = `${isVideo ? 'videos' : 'images'}/studio-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
     if (error) return toast.error(error.message);
-    const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+    const data = { publicUrl: await mediaUrl(path) };
 
     setResultUrl('');
     if (isVideo) {

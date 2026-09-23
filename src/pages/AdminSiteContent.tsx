@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useEffect, useState } from 'react';
 import { HelpCircle, Quote, Plus, Trash2, Save, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
@@ -103,7 +104,7 @@ const AdminSiteContent = () => {
     const path = `testimonials/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
     if (error) return toast.error(error.message);
-    const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+    const data = { publicUrl: await mediaUrl(path) };
     setTForm(f => ({ ...f, avatar_url: data.publicUrl }));
   };
 

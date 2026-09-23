@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useEffect, useState } from 'react';
 import { Copy, Trash2, Upload, Images } from 'lucide-react';
 import { toast } from 'sonner';
@@ -41,7 +42,7 @@ const AdminMedia = () => {
       const path = `${type}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
       if (error) { toast.error(`Upload failed: ${file.name}`); continue; }
-      const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+      const data = { publicUrl: await mediaUrl(path) };
       await supabase.from('media_assets').insert({
         url: data.publicUrl, path, file_name: file.name,
         media_type: type === 'videos' ? 'video' : 'image', size_bytes: file.size,

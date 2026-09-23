@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FolderOpen, Plus, Edit, Trash2 } from 'lucide-react';
@@ -86,7 +87,7 @@ const AdminCategories = () => {
     const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
     setUploading(false);
     if (error) return toast.error(error.message);
-    const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+    const data = { publicUrl: await mediaUrl(path) };
     setForm(f => ({ ...f, image_url: data.publicUrl }));
     toast.success('Cover image uploaded');
   };

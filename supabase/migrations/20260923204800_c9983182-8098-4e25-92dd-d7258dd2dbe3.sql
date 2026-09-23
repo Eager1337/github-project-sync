@@ -1,0 +1,1 @@
+CREATE POLICY "Admins read product media" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'product-media' AND public.has_role(auth.uid(), 'admin'));

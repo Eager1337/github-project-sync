@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Image, Check, X, Layers, Trash2 } from 'lucide-react';
@@ -59,7 +60,7 @@ const AdminBulkUpload = () => {
       });
       
       if (!error) {
-        const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+        const data = { publicUrl: await mediaUrl(path) };
         newProducts.push({
           id: Math.random().toString(36).slice(2),
           name,

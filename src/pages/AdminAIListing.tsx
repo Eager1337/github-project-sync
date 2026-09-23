@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Upload, Check, Trash2, Loader2, Wand2 } from 'lucide-react';
@@ -50,7 +51,7 @@ const AdminAIListing = () => {
       const path = `images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
       if (error) { toast.error(`Upload failed for ${file.name}`); continue; }
-      const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+      const data = { publicUrl: await mediaUrl(path) };
       await supabase.from('media_assets').insert({ url: data.publicUrl, path, file_name: file.name, media_type: 'image', size_bytes: file.size });
       added.push({ image: data.publicUrl, path, name: '', category: '', price: 0, description: '', stock: 1, sizes: [], colors: [], status: 'pending' });
     }

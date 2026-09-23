@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useRef, useState } from 'react';
 import { Upload, Download, Loader2, ImageIcon, Film, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
@@ -54,7 +55,7 @@ const AdminImageUpscaler = () => {
       const path = `images/upscale-src-${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
       if (error) throw error;
-      const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+      const data = { publicUrl: await mediaUrl(path) };
       setSourceUrl(data.publicUrl);
       const img = new Image();
       img.onload = () => setOriginalDims({ w: img.naturalWidth, h: img.naturalHeight });

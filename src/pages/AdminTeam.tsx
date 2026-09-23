@@ -1,3 +1,4 @@
+import { mediaUrl } from '@/lib/media';
 import { useEffect, useState } from 'react';
 import { Users, Plus, Trash2, Upload, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
@@ -37,7 +38,7 @@ const AdminTeam = () => {
     const path = `images/team-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
     if (error) return toast.error(error.message);
-    const { data } = supabase.storage.from('product-media').getPublicUrl(path);
+    const data = { publicUrl: await mediaUrl(path) };
     setForm(f => ({ ...f, photo_url: data.publicUrl }));
     toast.success('Photo uploaded');
   };

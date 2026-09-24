@@ -10,7 +10,7 @@ const Item = z.object({
 });
 
 export const createOrder = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         guest_token: z.string().min(8).max(100),
@@ -64,7 +64,7 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 export const listOrders = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ guest_token: z.string().min(8).max(100) }).parse(d))
+  .validator((d: unknown) => z.object({ guest_token: z.string().min(8).max(100) }).parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: orders } = await supabaseAdmin

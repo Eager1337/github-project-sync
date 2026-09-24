@@ -51,6 +51,11 @@ const Footer = () => {
             <h4 className="text-sm md:text-lg font-serif font-semibold text-foreground mb-4 md:mb-6">Quick Links</h4>
             <ul className="space-y-2 md:space-y-3">
               <li>
+                <Link to="/ai-shopper" className="text-muted-foreground hover:text-gold transition-colors text-xs md:text-sm">
+                  ✨ AI Product Finder
+                </Link>
+              </li>
+              <li>
                 <Link to="/categories" className="text-muted-foreground hover:text-gold transition-colors text-xs md:text-sm">
                   All Categories
                 </Link>

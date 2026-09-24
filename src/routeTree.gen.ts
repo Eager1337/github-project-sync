@@ -10,33 +10,505 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SlugRouteImport } from './routes/$slug'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DailyDropsRouteImport } from './routes/daily-drops'
+import { Route as MyOrdersRouteImport } from './routes/my-orders'
+import { Route as OurStoryRouteImport } from './routes/our-story'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as TrendingRouteImport } from './routes/trending'
+import { Route as WishlistRouteImport } from './routes/wishlist'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAiListingRouteImport } from './routes/admin.ai-listing'
+import { Route as AdminAiQueueRouteImport } from './routes/admin.ai-queue'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
+import { Route as AdminBulkUploadRouteImport } from './routes/admin.bulk-upload'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminCsvImportRouteImport } from './routes/admin.csv-import'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminDuplicateProductsRouteImport } from './routes/admin.duplicate-products'
+import { Route as AdminImageStudioRouteImport } from './routes/admin.image-studio'
+import { Route as AdminImageUpscalerRouteImport } from './routes/admin.image-upscaler'
+import { Route as AdminInventoryRouteImport } from './routes/admin.inventory'
+import { Route as AdminMediaRouteImport } from './routes/admin.media'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminPriceHistoryRouteImport } from './routes/admin.price-history'
+import { Route as AdminProductsRouteImport } from './routes/admin.products'
+import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
+import { Route as AdminScheduledAlertsRouteImport } from './routes/admin.scheduled-alerts'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminSiteContentRouteImport } from './routes/admin.site-content'
+import { Route as AdminTeamRouteImport } from './routes/admin.team'
+import { Route as AdminTiktokRouteImport } from './routes/admin.tiktok'
+import { Route as ProductIdRouteImport } from './routes/product.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DailyDropsRoute = DailyDropsRouteImport.update({
+  id: '/daily-drops',
+  path: '/daily-drops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyOrdersRoute = MyOrdersRouteImport.update({
+  id: '/my-orders',
+  path: '/my-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OurStoryRoute = OurStoryRouteImport.update({
+  id: '/our-story',
+  path: '/our-story',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrendingRoute = TrendingRouteImport.update({
+  id: '/trending',
+  path: '/trending',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAiListingRoute = AdminAiListingRouteImport.update({
+  id: '/admin/ai-listing',
+  path: '/admin/ai-listing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAiQueueRoute = AdminAiQueueRouteImport.update({
+  id: '/admin/ai-queue',
+  path: '/admin/ai-queue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/admin/analytics',
+  path: '/admin/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBulkUploadRoute = AdminBulkUploadRouteImport.update({
+  id: '/admin/bulk-upload',
+  path: '/admin/bulk-upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/admin/categories',
+  path: '/admin/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCsvImportRoute = AdminCsvImportRouteImport.update({
+  id: '/admin/csv-import',
+  path: '/admin/csv-import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/admin/customers',
+  path: '/admin/customers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDuplicateProductsRoute = AdminDuplicateProductsRouteImport.update({
+  id: '/admin/duplicate-products',
+  path: '/admin/duplicate-products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminImageStudioRoute = AdminImageStudioRouteImport.update({
+  id: '/admin/image-studio',
+  path: '/admin/image-studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminImageUpscalerRoute = AdminImageUpscalerRouteImport.update({
+  id: '/admin/image-upscaler',
+  path: '/admin/image-upscaler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminInventoryRoute = AdminInventoryRouteImport.update({
+  id: '/admin/inventory',
+  path: '/admin/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/admin/media',
+  path: '/admin/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/admin/notifications',
+  path: '/admin/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/admin/orders',
+  path: '/admin/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPriceHistoryRoute = AdminPriceHistoryRouteImport.update({
+  id: '/admin/price-history',
+  path: '/admin/price-history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/admin/products',
+  path: '/admin/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminScheduleRoute = AdminScheduleRouteImport.update({
+  id: '/admin/schedule',
+  path: '/admin/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminScheduledAlertsRoute = AdminScheduledAlertsRouteImport.update({
+  id: '/admin/scheduled-alerts',
+  path: '/admin/scheduled-alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSiteContentRoute = AdminSiteContentRouteImport.update({
+  id: '/admin/site-content',
+  path: '/admin/site-content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/admin/team',
+  path: '/admin/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTiktokRoute = AdminTiktokRouteImport.update({
+  id: '/admin/tiktok',
+  path: '/admin/tiktok',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductIdRoute = ProductIdRouteImport.update({
+  id: '/product/$id',
+  path: '/product/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
+  '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
+  '/contact': typeof ContactRoute
+  '/daily-drops': typeof DailyDropsRoute
+  '/my-orders': typeof MyOrdersRoute
+  '/our-story': typeof OurStoryRoute
+  '/profile': typeof ProfileRoute
+  '/shop': typeof ShopRoute
+  '/trending': typeof TrendingRoute
+  '/wishlist': typeof WishlistRoute
+  '/admin/ai-listing': typeof AdminAiListingRoute
+  '/admin/ai-queue': typeof AdminAiQueueRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/bulk-upload': typeof AdminBulkUploadRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/csv-import': typeof AdminCsvImportRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/duplicate-products': typeof AdminDuplicateProductsRoute
+  '/admin/image-studio': typeof AdminImageStudioRoute
+  '/admin/image-upscaler': typeof AdminImageUpscalerRoute
+  '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/price-history': typeof AdminPriceHistoryRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/scheduled-alerts': typeof AdminScheduledAlertsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/site-content': typeof AdminSiteContentRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/tiktok': typeof AdminTiktokRoute
+  '/product/$id': typeof ProductIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
+  '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
+  '/contact': typeof ContactRoute
+  '/daily-drops': typeof DailyDropsRoute
+  '/my-orders': typeof MyOrdersRoute
+  '/our-story': typeof OurStoryRoute
+  '/profile': typeof ProfileRoute
+  '/shop': typeof ShopRoute
+  '/trending': typeof TrendingRoute
+  '/wishlist': typeof WishlistRoute
+  '/admin/ai-listing': typeof AdminAiListingRoute
+  '/admin/ai-queue': typeof AdminAiQueueRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/bulk-upload': typeof AdminBulkUploadRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/csv-import': typeof AdminCsvImportRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/duplicate-products': typeof AdminDuplicateProductsRoute
+  '/admin/image-studio': typeof AdminImageStudioRoute
+  '/admin/image-upscaler': typeof AdminImageUpscalerRoute
+  '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/price-history': typeof AdminPriceHistoryRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/scheduled-alerts': typeof AdminScheduledAlertsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/site-content': typeof AdminSiteContentRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/tiktok': typeof AdminTiktokRoute
+  '/product/$id': typeof ProductIdRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
+  '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
+  '/contact': typeof ContactRoute
+  '/daily-drops': typeof DailyDropsRoute
+  '/my-orders': typeof MyOrdersRoute
+  '/our-story': typeof OurStoryRoute
+  '/profile': typeof ProfileRoute
+  '/shop': typeof ShopRoute
+  '/trending': typeof TrendingRoute
+  '/wishlist': typeof WishlistRoute
+  '/admin/ai-listing': typeof AdminAiListingRoute
+  '/admin/ai-queue': typeof AdminAiQueueRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/bulk-upload': typeof AdminBulkUploadRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/csv-import': typeof AdminCsvImportRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/duplicate-products': typeof AdminDuplicateProductsRoute
+  '/admin/image-studio': typeof AdminImageStudioRoute
+  '/admin/image-upscaler': typeof AdminImageUpscalerRoute
+  '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/price-history': typeof AdminPriceHistoryRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/scheduled-alerts': typeof AdminScheduledAlertsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/site-content': typeof AdminSiteContentRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/tiktok': typeof AdminTiktokRoute
+  '/product/$id': typeof ProductIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/$slug'
+    | '/cart'
+    | '/categories'
+    | '/contact'
+    | '/daily-drops'
+    | '/my-orders'
+    | '/our-story'
+    | '/profile'
+    | '/shop'
+    | '/trending'
+    | '/wishlist'
+    | '/admin/ai-listing'
+    | '/admin/ai-queue'
+    | '/admin/analytics'
+    | '/admin/bulk-upload'
+    | '/admin/categories'
+    | '/admin/csv-import'
+    | '/admin/customers'
+    | '/admin/dashboard'
+    | '/admin/duplicate-products'
+    | '/admin/image-studio'
+    | '/admin/image-upscaler'
+    | '/admin/inventory'
+    | '/admin/media'
+    | '/admin/notifications'
+    | '/admin/orders'
+    | '/admin/price-history'
+    | '/admin/products'
+    | '/admin/schedule'
+    | '/admin/scheduled-alerts'
+    | '/admin/settings'
+    | '/admin/site-content'
+    | '/admin/team'
+    | '/admin/tiktok'
+    | '/product/$id'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/$slug'
+    | '/cart'
+    | '/categories'
+    | '/contact'
+    | '/daily-drops'
+    | '/my-orders'
+    | '/our-story'
+    | '/profile'
+    | '/shop'
+    | '/trending'
+    | '/wishlist'
+    | '/admin/ai-listing'
+    | '/admin/ai-queue'
+    | '/admin/analytics'
+    | '/admin/bulk-upload'
+    | '/admin/categories'
+    | '/admin/csv-import'
+    | '/admin/customers'
+    | '/admin/dashboard'
+    | '/admin/duplicate-products'
+    | '/admin/image-studio'
+    | '/admin/image-upscaler'
+    | '/admin/inventory'
+    | '/admin/media'
+    | '/admin/notifications'
+    | '/admin/orders'
+    | '/admin/price-history'
+    | '/admin/products'
+    | '/admin/schedule'
+    | '/admin/scheduled-alerts'
+    | '/admin/settings'
+    | '/admin/site-content'
+    | '/admin/team'
+    | '/admin/tiktok'
+    | '/product/$id'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/$slug'
+    | '/cart'
+    | '/categories'
+    | '/contact'
+    | '/daily-drops'
+    | '/my-orders'
+    | '/our-story'
+    | '/profile'
+    | '/shop'
+    | '/trending'
+    | '/wishlist'
+    | '/admin/ai-listing'
+    | '/admin/ai-queue'
+    | '/admin/analytics'
+    | '/admin/bulk-upload'
+    | '/admin/categories'
+    | '/admin/csv-import'
+    | '/admin/customers'
+    | '/admin/dashboard'
+    | '/admin/duplicate-products'
+    | '/admin/image-studio'
+    | '/admin/image-upscaler'
+    | '/admin/inventory'
+    | '/admin/media'
+    | '/admin/notifications'
+    | '/admin/orders'
+    | '/admin/price-history'
+    | '/admin/products'
+    | '/admin/schedule'
+    | '/admin/scheduled-alerts'
+    | '/admin/settings'
+    | '/admin/site-content'
+    | '/admin/team'
+    | '/admin/tiktok'
+    | '/product/$id'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SlugRoute: typeof SlugRoute
+  CartRoute: typeof CartRoute
+  CategoriesRoute: typeof CategoriesRoute
+  ContactRoute: typeof ContactRoute
+  DailyDropsRoute: typeof DailyDropsRoute
+  MyOrdersRoute: typeof MyOrdersRoute
+  OurStoryRoute: typeof OurStoryRoute
+  ProfileRoute: typeof ProfileRoute
+  ShopRoute: typeof ShopRoute
+  TrendingRoute: typeof TrendingRoute
+  WishlistRoute: typeof WishlistRoute
+  AdminAiListingRoute: typeof AdminAiListingRoute
+  AdminAiQueueRoute: typeof AdminAiQueueRoute
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminBulkUploadRoute: typeof AdminBulkUploadRoute
+  AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminCsvImportRoute: typeof AdminCsvImportRoute
+  AdminCustomersRoute: typeof AdminCustomersRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDuplicateProductsRoute: typeof AdminDuplicateProductsRoute
+  AdminImageStudioRoute: typeof AdminImageStudioRoute
+  AdminImageUpscalerRoute: typeof AdminImageUpscalerRoute
+  AdminInventoryRoute: typeof AdminInventoryRoute
+  AdminMediaRoute: typeof AdminMediaRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminPriceHistoryRoute: typeof AdminPriceHistoryRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminScheduleRoute: typeof AdminScheduleRoute
+  AdminScheduledAlertsRoute: typeof AdminScheduledAlertsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSiteContentRoute: typeof AdminSiteContentRoute
+  AdminTeamRoute: typeof AdminTeamRoute
+  AdminTiktokRoute: typeof AdminTiktokRoute
+  ProductIdRoute: typeof ProductIdRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +520,299 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/daily-drops': {
+      id: '/daily-drops'
+      path: '/daily-drops'
+      fullPath: '/daily-drops'
+      preLoaderRoute: typeof DailyDropsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-orders': {
+      id: '/my-orders'
+      path: '/my-orders'
+      fullPath: '/my-orders'
+      preLoaderRoute: typeof MyOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/our-story': {
+      id: '/our-story'
+      path: '/our-story'
+      fullPath: '/our-story'
+      preLoaderRoute: typeof OurStoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trending': {
+      id: '/trending'
+      path: '/trending'
+      fullPath: '/trending'
+      preLoaderRoute: typeof TrendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ai-listing': {
+      id: '/admin/ai-listing'
+      path: '/admin/ai-listing'
+      fullPath: '/admin/ai-listing'
+      preLoaderRoute: typeof AdminAiListingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ai-queue': {
+      id: '/admin/ai-queue'
+      path: '/admin/ai-queue'
+      fullPath: '/admin/ai-queue'
+      preLoaderRoute: typeof AdminAiQueueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/admin/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/bulk-upload': {
+      id: '/admin/bulk-upload'
+      path: '/admin/bulk-upload'
+      fullPath: '/admin/bulk-upload'
+      preLoaderRoute: typeof AdminBulkUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/admin/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/csv-import': {
+      id: '/admin/csv-import'
+      path: '/admin/csv-import'
+      fullPath: '/admin/csv-import'
+      preLoaderRoute: typeof AdminCsvImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/admin/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/admin/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/duplicate-products': {
+      id: '/admin/duplicate-products'
+      path: '/admin/duplicate-products'
+      fullPath: '/admin/duplicate-products'
+      preLoaderRoute: typeof AdminDuplicateProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/image-studio': {
+      id: '/admin/image-studio'
+      path: '/admin/image-studio'
+      fullPath: '/admin/image-studio'
+      preLoaderRoute: typeof AdminImageStudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/image-upscaler': {
+      id: '/admin/image-upscaler'
+      path: '/admin/image-upscaler'
+      fullPath: '/admin/image-upscaler'
+      preLoaderRoute: typeof AdminImageUpscalerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/inventory': {
+      id: '/admin/inventory'
+      path: '/admin/inventory'
+      fullPath: '/admin/inventory'
+      preLoaderRoute: typeof AdminInventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/admin/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/admin/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/admin/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/price-history': {
+      id: '/admin/price-history'
+      path: '/admin/price-history'
+      fullPath: '/admin/price-history'
+      preLoaderRoute: typeof AdminPriceHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/admin/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/schedule': {
+      id: '/admin/schedule'
+      path: '/admin/schedule'
+      fullPath: '/admin/schedule'
+      preLoaderRoute: typeof AdminScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/scheduled-alerts': {
+      id: '/admin/scheduled-alerts'
+      path: '/admin/scheduled-alerts'
+      fullPath: '/admin/scheduled-alerts'
+      preLoaderRoute: typeof AdminScheduledAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/site-content': {
+      id: '/admin/site-content'
+      path: '/admin/site-content'
+      fullPath: '/admin/site-content'
+      preLoaderRoute: typeof AdminSiteContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/admin/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/tiktok': {
+      id: '/admin/tiktok'
+      path: '/admin/tiktok'
+      fullPath: '/admin/tiktok'
+      preLoaderRoute: typeof AdminTiktokRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/$id': {
+      id: '/product/$id'
+      path: '/product/$id'
+      fullPath: '/product/$id'
+      preLoaderRoute: typeof ProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SlugRoute: SlugRoute,
+  CartRoute: CartRoute,
+  CategoriesRoute: CategoriesRoute,
+  ContactRoute: ContactRoute,
+  DailyDropsRoute: DailyDropsRoute,
+  MyOrdersRoute: MyOrdersRoute,
+  OurStoryRoute: OurStoryRoute,
+  ProfileRoute: ProfileRoute,
+  ShopRoute: ShopRoute,
+  TrendingRoute: TrendingRoute,
+  WishlistRoute: WishlistRoute,
+  AdminAiListingRoute: AdminAiListingRoute,
+  AdminAiQueueRoute: AdminAiQueueRoute,
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminBulkUploadRoute: AdminBulkUploadRoute,
+  AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminCsvImportRoute: AdminCsvImportRoute,
+  AdminCustomersRoute: AdminCustomersRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminDuplicateProductsRoute: AdminDuplicateProductsRoute,
+  AdminImageStudioRoute: AdminImageStudioRoute,
+  AdminImageUpscalerRoute: AdminImageUpscalerRoute,
+  AdminInventoryRoute: AdminInventoryRoute,
+  AdminMediaRoute: AdminMediaRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
+  AdminPriceHistoryRoute: AdminPriceHistoryRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminScheduleRoute: AdminScheduleRoute,
+  AdminScheduledAlertsRoute: AdminScheduledAlertsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSiteContentRoute: AdminSiteContentRoute,
+  AdminTeamRoute: AdminTeamRoute,
+  AdminTiktokRoute: AdminTiktokRoute,
+  ProductIdRoute: ProductIdRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

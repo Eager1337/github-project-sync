@@ -9,6 +9,7 @@ import NewsletterSection from '@/components/home/NewsletterSection';
 import TikTokSection from '@/components/home/TikTokSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import FaqSection from '@/components/home/FaqSection';
+import AiShopperSection from '@/components/home/AiShopperSection';
 import DownloadSection from '@/components/home/DownloadSection';
 
 const Index = () => {
@@ -18,6 +19,7 @@ const Index = () => {
       <main>
         <HeroSection />
         <FeaturesSection />
+        <AiShopperSection />
         <FeaturedProducts />
         <HighlightSection />
         <CategoriesSection />

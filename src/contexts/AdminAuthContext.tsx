@@ -2,6 +2,72 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+/**
+ * Admin account credentials.
+ *
+ * The login form sends the username as `${username}@${ADMIN_EMAIL_DOMAIN}`.
+ * When those exact credentials are entered, the user is signed in directly as
+ * the local admin without hitting Supabase. Any other username/password still
+ * goes through the normal Supabase auth + user_roles flow.
+ */
+export const ADMIN_USERNAME = 'Eagerbeaver';
+export const ADMIN_PASSWORD = 'Eagerbeaver123';
+export const ADMIN_EMAIL_DOMAIN = 'haamkay.app';
+
+const ADMIN_EMAIL = `${ADMIN_USERNAME.toLowerCase()}@${ADMIN_EMAIL_DOMAIN}`;
+const LOCAL_ADMIN_STORAGE_KEY = 'haamkay_admin_local_session';
+const LOCAL_ADMIN_USER_ID = 'local-admin-eagerbeaver';
+
+const hasLocalAdminSession = (): boolean => {
+  try {
+    return (
+      typeof window !== 'undefined' &&
+      window.localStorage.getItem(LOCAL_ADMIN_STORAGE_KEY) !== null
+    );
+  } catch {
+    return false;
+  }
+};
+
+const startLocalAdminSession = (): void => {
+  try {
+    window.localStorage.setItem(
+      LOCAL_ADMIN_STORAGE_KEY,
+      JSON.stringify({ email: ADMIN_EMAIL, createdAt: new Date().toISOString() })
+    );
+  } catch {
+    // Non-fatal: the login still works for the life of the tab.
+  }
+};
+
+const clearLocalAdminSession = (): void => {
+  try {
+    window.localStorage.removeItem(LOCAL_ADMIN_STORAGE_KEY);
+  } catch {
+    // Ignore.
+  }
+};
+
+const LOCAL_ADMIN_USER: User = {
+  id: LOCAL_ADMIN_USER_ID,
+  aud: 'authenticated',
+  created_at: new Date(0).toISOString(),
+  email: ADMIN_EMAIL,
+  app_metadata: { provider: 'local-admin', providers: ['local-admin'] },
+  user_metadata: { username: ADMIN_USERNAME },
+  identities: [],
+  is_anonymous: false,
+};
+
+const LOCAL_ADMIN_SESSION: Session = {
+  access_token: 'local-admin-session-token',
+  refresh_token: 'local-admin-refresh-token',
+  expires_in: 3600,
+  expires_at: 0,
+  token_type: 'bearer',
+  user: LOCAL_ADMIN_USER,
+};
+
 interface AdminAuthContextType {
   user: User | null;
   session: Session | null;
@@ -27,12 +93,12 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
         .eq('user_id', userId)
         .eq('role', 'admin')
         .maybeSingle();
-      
+
       if (error) {
         console.error('Error checking admin role:', error);
         return false;
       }
-      
+
       return !!data;
     } catch (err) {
       console.error('Error checking admin role:', err);
@@ -41,20 +107,30 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    // Restore a previously signed-in local admin session (if any).
+    if (hasLocalAdminSession()) {
+      setSession(LOCAL_ADMIN_SESSION);
+      setUser(LOCAL_ADMIN_USER);
+      setIsAdmin(true);
+    }
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Defer admin role check with setTimeout to avoid deadlock
         if (session?.user) {
+          // A real Supabase session takes precedence over the local admin one.
+          setSession(session);
+          setUser(session.user);
+
+          // Defer admin role check with setTimeout to avoid deadlock
           setTimeout(async () => {
             const adminStatus = await checkAdminRole(session.user.id);
             setIsAdmin(adminStatus);
             setIsLoading(false);
           }, 0);
-        } else {
+        } else if (!hasLocalAdminSession()) {
+          setSession(null);
+          setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
         }
@@ -63,10 +139,10 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
       if (session?.user) {
+        setSession(session);
+        setUser(session.user);
+
         const adminStatus = await checkAdminRole(session.user.id);
         setIsAdmin(adminStatus);
       }
@@ -77,6 +153,19 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    // Local admin account: username "Eagerbeaver" with its password.
+    const isLocalAdmin =
+      email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+
+    if (isLocalAdmin) {
+      startLocalAdminSession();
+      setUser(LOCAL_ADMIN_USER);
+      setSession(LOCAL_ADMIN_SESSION);
+      setIsAdmin(true);
+      setIsLoading(false);
+      return { error: null };
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -103,6 +192,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    clearLocalAdminSession();
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);

@@ -1,4 +1,4 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Image, Check, X, Layers, Trash2 } from 'lucide-react';
@@ -25,6 +25,7 @@ const AdminBulkUpload = () => {
   const [defaultCategory, setDefaultCategory] = useState('');
   const [defaultPrice, setDefaultPrice] = useState(0);
   const [defaultStock, setDefaultStock] = useState(10);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     fetchCategories();
@@ -38,43 +39,50 @@ const AdminBulkUpload = () => {
     }
   };
 
-  const handleFilesSelect = useCallback(async (files: FileList) => {
+  const [processing, setProcessing] = useState(0);
+
+  const handleFilesSelect = useCallback(async (files: FileList | File[]) => {
+    const list = Array.from(files);
+    if (!list.length) return;
     const newProducts: BulkProduct[] = [];
-    
-    for (const file of Array.from(files)) {
-      const validation = validateMediaFile(file, 'images');
-      if (!validation.valid) {
-        toast.error(validation.error);
-        continue;
+    setProcessing(list.length);
+
+    try {
+      for (const file of list) {
+        const validation = validateMediaFile(file, 'images');
+        if (!validation.valid) {
+          toast.error(validation.error);
+          continue;
+        }
+
+        // Generate name from filename
+        const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim() || 'Product';
+        const name = baseName.charAt(0).toUpperCase() + baseName.slice(1);
+
+        try {
+          const { url, path } = await uploadMedia(file, 'images');
+          await supabase.from('media_assets').insert({
+            url, path, file_name: file.name, media_type: 'image', size_bytes: file.size,
+          });
+          newProducts.push({
+            id: Math.random().toString(36).slice(2),
+            name,
+            category: defaultCategory,
+            price: defaultPrice,
+            stock: defaultStock,
+            images: [url],
+            status: 'pending'
+          });
+        } catch (err) {
+          toast.error(`Failed to upload ${file.name}: ${(err as Error).message}`);
+        } finally {
+          setProcessing(n => Math.max(0, n - 1));
+        }
       }
-      
-      // Generate name from filename
-      const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
-      const name = baseName.charAt(0).toUpperCase() + baseName.slice(1);
-      
-      // Upload file first
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      const path = `images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from('product-media').upload(path, file, {
-        contentType: file.type,
-      });
-      
-      if (!error) {
-        const data = { publicUrl: await mediaUrl(path) };
-        newProducts.push({
-          id: Math.random().toString(36).slice(2),
-          name,
-          category: defaultCategory,
-          price: defaultPrice,
-          stock: defaultStock,
-          images: [data.publicUrl],
-          status: 'pending'
-        });
-      } else {
-        toast.error(`Failed to upload ${file.name}: ${error.message}`);
-      }
+    } finally {
+      setProcessing(0);
     }
-    
+
     setBulkProducts(prev => [...prev, ...newProducts]);
     if (newProducts.length > 0) {
       toast.success(`${newProducts.length} products added to queue!`);
@@ -122,7 +130,9 @@ const AdminBulkUpload = () => {
     setUploading(true);
     let successCount = 0;
     
-    for (const product of bulkProducts) {
+    let failCount = 0;
+
+    for (const product of bulkProducts.filter(p => p.status !== 'done')) {
       setBulkProducts(prev => prev.map(p => p.id === product.id ? { ...p, status: 'uploading' } : p));
       
       const { error } = await supabase.from('products').insert({
@@ -138,6 +148,7 @@ const AdminBulkUpload = () => {
       if (error) {
         setBulkProducts(prev => prev.map(p => p.id === product.id ? { ...p, status: 'error' } : p));
         toast.error(`Failed to upload "${product.name}": ${error.message}`);
+        failCount++;
       } else {
         setBulkProducts(prev => prev.map(p => p.id === product.id ? { ...p, status: 'done' } : p));
         successCount++;
@@ -145,7 +156,9 @@ const AdminBulkUpload = () => {
     }
     
     setUploading(false);
-    toast.success(`${successCount} products uploaded successfully!`);
+    if (successCount > 0 && failCount === 0) toast.success(`${successCount} products uploaded successfully!`);
+    else if (successCount > 0) toast.warning(`${successCount} uploaded, ${failCount} failed — fix and retry the failed ones.`);
+
     
     // Clear done products after 2 seconds
     setTimeout(() => {
@@ -209,11 +222,21 @@ const AdminBulkUpload = () => {
 
       {/* Upload Zone */}
       <div className="card-luxury mb-8">
-        <label className="block cursor-pointer">
-          <div className="border-2 border-dashed border-border rounded-xl p-12 text-center hover:border-gold transition-colors">
+        <label
+          className="block cursor-pointer"
+          onDragOver={e => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={e => {
+            e.preventDefault();
+            setDragging(false);
+            if (processing) return;
+            if (e.dataTransfer.files?.length) void handleFilesSelect(e.dataTransfer.files);
+          }}
+        >
+          <div className={`border-2 border-dashed rounded-xl p-12 text-center hover:border-gold transition-colors ${dragging ? 'border-gold bg-gold/5' : 'border-border'}`}>
             <Image className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <p className="text-lg font-semibold text-foreground mb-2">
-              Click or drag images to upload
+              {processing ? `Uploading… ${processing} left` : 'Click or drag images to upload'}
             </p>
             <p className="text-sm text-muted-foreground">
               Select multiple images at once • Each image becomes a product • Max 10MB per file
@@ -223,7 +246,12 @@ const AdminBulkUpload = () => {
             type="file"
             multiple
             accept="image/*"
-            onChange={e => e.target.files && handleFilesSelect(e.target.files)}
+            disabled={processing > 0}
+            onChange={e => {
+              const files = e.target.files ? Array.from(e.target.files) : [];
+              e.currentTarget.value = '';
+              if (files.length) void handleFilesSelect(files);
+            }}
             className="hidden"
           />
         </label>

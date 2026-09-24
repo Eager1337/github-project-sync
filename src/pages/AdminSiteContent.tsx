@@ -1,4 +1,5 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
+import { validateMediaFile } from '@/lib/fileValidation';
 import { useEffect, useState } from 'react';
 import { HelpCircle, Quote, Plus, Trash2, Save, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
@@ -24,6 +25,7 @@ interface Testimonial {
 
 const AdminSiteContent = () => {
   const [tab, setTab] = useState<'faqs' | 'testimonials'>('faqs');
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [faqForm, setFaqForm] = useState({ question: '', answer: '', sort_order: 0 });
@@ -101,11 +103,18 @@ const AdminSiteContent = () => {
   };
 
   const uploadAvatar = async (file: File) => {
-    const path = `testimonials/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
-    if (error) return toast.error(error.message);
-    const data = { publicUrl: await mediaUrl(path) };
-    setTForm(f => ({ ...f, avatar_url: data.publicUrl }));
+    const check = validateMediaFile(file, 'images');
+    if (!check.valid) return toast.error(check.error);
+    setAvatarUploading(true);
+    try {
+      const { url } = await uploadMedia(file, 'testimonials');
+      setTForm(f => ({ ...f, avatar_url: url }));
+      toast.success('Photo uploaded');
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setAvatarUploading(false);
+    }
   };
 
   return (
@@ -213,11 +222,13 @@ const AdminSiteContent = () => {
             <input
               type="file"
               accept="image/*"
-              onChange={e => { const f = e.target.files?.[0]; if (f) uploadAvatar(f); }}
+              disabled={avatarUploading}
+              onChange={e => { const f = e.target.files?.[0]; e.currentTarget.value = ''; if (f) void uploadAvatar(f); }}
               className="w-full text-sm text-muted-foreground"
             />
+            {avatarUploading && <p className="text-xs text-gold">Uploading…</p>}
             {tForm.avatar_url && <img src={tForm.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" />}
-            <button onClick={addTestimonial} className="btn-gold w-full flex items-center justify-center gap-2">
+            <button onClick={addTestimonial} disabled={avatarUploading} className="btn-gold w-full flex items-center justify-center gap-2">
               <Plus className="w-4 h-4" /> Add testimonial
             </button>
           </div>

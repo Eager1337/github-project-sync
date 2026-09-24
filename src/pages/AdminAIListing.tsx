@@ -1,4 +1,4 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Upload, Check, Trash2, Loader2, Wand2 } from 'lucide-react';
@@ -36,7 +36,7 @@ const AdminAIListing = () => {
     supabase.from('categories').select('name').then(({ data }) => { if (data) setCategories(data.map(c => c.name)); });
   }, []);
 
-  const handleUpload = async (files: FileList | null) => {
+  const handleUpload = async (files: FileList | File[] | null) => {
     if (!files?.length) return;
     const remaining = MAX_AI_IMAGES - drafts.length;
     if (remaining <= 0) { toast.error(`AI Listing Studio is limited to ${MAX_AI_IMAGES} images per batch.`); return; }
@@ -44,19 +44,22 @@ const AdminAIListing = () => {
     if (files.length > remaining) toast.warning(`Only ${remaining} more image${remaining === 1 ? '' : 's'} can be added. The batch limit is ${MAX_AI_IMAGES}.`);
     setUploading(true);
     const added: Draft[] = [];
-    for (const file of selected) {
-      const validation = validateMediaFile(file, 'images');
-      if (!validation.valid) { toast.error(`${file.name}: ${validation.error}`); continue; }
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      const path = `images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
-      if (error) { toast.error(`Upload failed for ${file.name}`); continue; }
-      const data = { publicUrl: await mediaUrl(path) };
-      await supabase.from('media_assets').insert({ url: data.publicUrl, path, file_name: file.name, media_type: 'image', size_bytes: file.size });
-      added.push({ image: data.publicUrl, path, name: '', category: '', price: 0, description: '', stock: 1, sizes: [], colors: [], status: 'pending' });
+    try {
+      for (const file of selected) {
+        const validation = validateMediaFile(file, 'images');
+        if (!validation.valid) { toast.error(`${file.name}: ${validation.error}`); continue; }
+        try {
+          const { url, path } = await uploadMedia(file, 'images');
+          await supabase.from('media_assets').insert({ url, path, file_name: file.name, media_type: 'image', size_bytes: file.size });
+          added.push({ image: url, path, name: '', category: '', price: 0, description: '', stock: 1, sizes: [], colors: [], status: 'pending' });
+        } catch (err) {
+          toast.error(`Upload failed for ${file.name}: ${(err as Error).message}`);
+        }
+      }
+    } finally {
+      setDrafts(prev => [...prev, ...added].slice(0, MAX_AI_IMAGES));
+      setUploading(false);
     }
-    setDrafts(prev => [...prev, ...added].slice(0, MAX_AI_IMAGES));
-    setUploading(false);
     if (added.length) toast.success(`${added.length} photo(s) uploaded. Run the AI to build listings.`);
   };
 
@@ -135,7 +138,7 @@ const AdminAIListing = () => {
       </>
     }>
       <label className={`block card-luxury p-6 sm:p-10 text-center border-2 border-dashed border-gold/40 cursor-pointer hover:border-gold transition-colors mb-6 ${drafts.length >= MAX_AI_IMAGES ? 'opacity-60 cursor-not-allowed' : ''}`}>
-        <input type="file" accept="image/*" multiple disabled={drafts.length >= MAX_AI_IMAGES || uploading || analyzing} className="hidden" onChange={e => { void handleUpload(e.target.files); e.currentTarget.value = ''; }} />
+        <input type="file" accept="image/*" multiple disabled={drafts.length >= MAX_AI_IMAGES || uploading || analyzing} className="hidden" onChange={e => { const f = e.target.files ? Array.from(e.target.files) : []; e.currentTarget.value = ''; void handleUpload(f); }} />
         <Upload className="w-8 h-8 text-gold mx-auto mb-3" />
         <p className="text-foreground font-medium">{uploading ? 'Uploading…' : drafts.length >= MAX_AI_IMAGES ? '20-image limit reached' : 'Tap to upload product photos'}</p>
         <p className="text-xs text-muted-foreground mt-1">{drafts.length}/{MAX_AI_IMAGES} photos · JPG, PNG, WEBP or GIF · up to 10MB each</p>

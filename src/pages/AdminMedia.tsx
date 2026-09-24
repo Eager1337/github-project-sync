@@ -1,4 +1,4 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia, removeMedia } from '@/lib/media';
 import { useEffect, useState } from 'react';
 import { Copy, Trash2, Upload, Images } from 'lucide-react';
 import { toast } from 'sonner';
@@ -28,33 +28,39 @@ const AdminMedia = () => {
 
   useEffect(() => { load(); }, []);
 
-  const upload = async (files: FileList | null) => {
+  const upload = async (files: FileList | File[] | null) => {
     if (!files?.length) return;
     setUploading(true);
-    for (const file of Array.from(files)) {
-      const type = file.type.startsWith('video') ? 'videos' : 'images';
-      const validation = validateMediaFile(file, type);
-      if (!validation.valid) {
-        toast.error(`${file.name}: ${validation.error}`);
-        continue;
+    let uploaded = 0;
+    try {
+      for (const file of Array.from(files)) {
+        const type = file.type.startsWith('video') || /\.(mp4|m4v|webm|mov|qt)$/i.test(file.name) ? 'videos' : 'images';
+        const validation = validateMediaFile(file, type);
+        if (!validation.valid) {
+          toast.error(`${file.name}: ${validation.error}`);
+          continue;
+        }
+        try {
+          const { url, path } = await uploadMedia(file, type);
+          const { error } = await supabase.from('media_assets').insert({
+            url, path, file_name: file.name,
+            media_type: type === 'videos' ? 'video' : 'image', size_bytes: file.size,
+          });
+          if (error) throw new Error(`Uploaded, but could not save to the library: ${error.message}`);
+          uploaded++;
+        } catch (err) {
+          toast.error(`${file.name}: ${(err as Error).message}`);
+        }
       }
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      const path = `${type}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
-      if (error) { toast.error(`Upload failed: ${file.name}`); continue; }
-      const data = { publicUrl: await mediaUrl(path) };
-      await supabase.from('media_assets').insert({
-        url: data.publicUrl, path, file_name: file.name,
-        media_type: type === 'videos' ? 'video' : 'image', size_bytes: file.size,
-      });
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
     load();
-    toast.success('Media uploaded');
+    if (uploaded) toast.success(`${uploaded} file${uploaded === 1 ? '' : 's'} uploaded`);
   };
 
   const remove = async (asset: Asset) => {
-    await supabase.storage.from('product-media').remove([asset.path]);
+    await removeMedia(asset.path);
     const { error } = await supabase.from('media_assets').delete().eq('id', asset.id);
     if (error) return toast.error(error.message);
     setAssets(prev => prev.filter(a => a.id !== asset.id));
@@ -71,7 +77,7 @@ const AdminMedia = () => {
         <label className="btn-gold !py-2 !px-4 text-sm flex items-center gap-2 cursor-pointer">
           <Upload className="w-4 h-4" />
           {uploading ? 'Uploading…' : 'Upload'}
-          <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={e => upload(e.target.files)} />
+          <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={e => { const f = e.target.files; void upload(f ? Array.from(f) : null); e.currentTarget.value = ''; }} />
         </label>
       }
     >

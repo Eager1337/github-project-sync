@@ -1,4 +1,4 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
 import { useEffect, useState } from 'react';
 import { Users, Plus, Trash2, Upload, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
@@ -34,13 +34,14 @@ const AdminTeam = () => {
     if (!file) return;
     const check = validateMediaFile(file, 'images');
     if (!check.valid) return toast.error(check.error);
-    const ext = file.name.split('.').pop()?.toLowerCase();
-    const path = `images/team-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
-    if (error) return toast.error(error.message);
-    const data = { publicUrl: await mediaUrl(path) };
-    setForm(f => ({ ...f, photo_url: data.publicUrl }));
-    toast.success('Photo uploaded');
+    const toastId = toast.loading('Uploading photo…');
+    try {
+      const { url } = await uploadMedia(file, 'images', 'team');
+      setForm(f => ({ ...f, photo_url: url }));
+      toast.success('Photo uploaded', { id: toastId });
+    } catch (err) {
+      toast.error((err as Error).message, { id: toastId });
+    }
   };
 
   const aiBio = async () => {
@@ -95,7 +96,7 @@ const AdminTeam = () => {
           </button>
           <label className="flex items-center justify-center gap-2 px-4 py-4 rounded-xl border border-dashed border-gold/40 text-gold cursor-pointer hover:bg-gold/10 text-sm">
             <Upload className="w-4 h-4" /> {form.photo_url ? 'Change photo' : 'Upload photo'}
-            <input type="file" accept="image/*" className="hidden" onChange={e => uploadPhoto(e.target.files?.[0])} />
+            <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; e.currentTarget.value = ''; void uploadPhoto(f); }} />
           </label>
           {form.photo_url && <img src={form.photo_url} alt="Team member preview" className="w-24 h-24 rounded-full object-cover" />}
           <input type="number" className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm" placeholder="Sort order" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: Number(e.target.value) })} />

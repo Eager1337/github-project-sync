@@ -1,4 +1,4 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
 import { useEffect, useRef, useState } from 'react';
 import { Sparkles, Wand2, Upload, Loader2, Check, Film, Camera } from 'lucide-react';
 import { toast } from 'sonner';
@@ -41,11 +41,15 @@ const AdminImageStudio = () => {
     const check = validateMediaFile(file, isVideo ? 'videos' : 'images');
     if (!check.valid) return toast.error(check.error);
 
-    const ext = file.name.split('.').pop()?.toLowerCase();
-    const path = `${isVideo ? 'videos' : 'images'}/studio-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
-    if (error) return toast.error(error.message);
-    const data = { publicUrl: await mediaUrl(path) };
+    const toastId = toast.loading(`Uploading ${isVideo ? 'video' : 'image'}…`);
+    let data: { publicUrl: string };
+    try {
+      const uploaded = await uploadMedia(file, isVideo ? 'videos' : 'images', 'studio');
+      data = { publicUrl: uploaded.url };
+      toast.dismiss(toastId);
+    } catch (err) {
+      return toast.error((err as Error).message, { id: toastId });
+    }
 
     setResultUrl('');
     if (isVideo) {
@@ -115,7 +119,7 @@ const AdminImageStudio = () => {
             <label className="text-sm text-muted-foreground">Upload a photo or a video</label>
             <label className="flex items-center justify-center gap-2 px-4 py-6 rounded-xl border border-dashed border-gold/40 text-gold cursor-pointer hover:bg-gold/10">
               <Upload className="w-4 h-4" /> Choose photo or video
-              <input type="file" accept="image/*,video/*" className="hidden" onChange={e => uploadLocal(e.target.files?.[0])} />
+              <input type="file" accept="image/*,video/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; e.currentTarget.value = ''; void uploadLocal(f); }} />
             </label>
 
             <label className="text-sm text-muted-foreground">…or pick an existing product photo</label>

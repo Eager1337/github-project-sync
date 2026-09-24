@@ -1,4 +1,4 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
 import { useRef, useState } from 'react';
 import { Upload, Download, Loader2, ImageIcon, Film, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
@@ -51,11 +51,8 @@ const AdminImageUpscaler = () => {
     // Images are uploaded first so the AI upscale function (server-side) can fetch and process them.
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      const path = `images/upscale-src-${Date.now()}.${ext}`;
-      const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
-      if (error) throw error;
-      const data = { publicUrl: await mediaUrl(path) };
+      const uploaded = await uploadMedia(file, 'images', 'upscale-src');
+      const data = { publicUrl: uploaded.url };
       setSourceUrl(data.publicUrl);
       const img = new Image();
       img.onload = () => setOriginalDims({ w: img.naturalWidth, h: img.naturalHeight });
@@ -205,7 +202,7 @@ const AdminImageUpscaler = () => {
                 accept="image/*,video/*"
                 className="hidden"
                 disabled={uploading}
-                onChange={e => handleFile(e.target.files?.[0])}
+                onChange={e => { const f = e.target.files?.[0]; e.currentTarget.value = ''; void handleFile(f); }}
               />
             </label>
 

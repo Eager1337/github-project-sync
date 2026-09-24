@@ -1,4 +1,5 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
+import { validateMediaFile } from '@/lib/fileValidation';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FolderOpen, Plus, Edit, Trash2 } from 'lucide-react';
@@ -82,14 +83,18 @@ const AdminCategories = () => {
   };
 
   const handleCover = async (file: File) => {
+    const check = validateMediaFile(file, 'images');
+    if (!check.valid) return toast.error(check.error);
     setUploading(true);
-    const path = `categories/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    const { error } = await supabase.storage.from('product-media').upload(path, file, { contentType: file.type });
-    setUploading(false);
-    if (error) return toast.error(error.message);
-    const data = { publicUrl: await mediaUrl(path) };
-    setForm(f => ({ ...f, image_url: data.publicUrl }));
-    toast.success('Cover image uploaded');
+    try {
+      const { url } = await uploadMedia(file, 'categories');
+      setForm(f => ({ ...f, image_url: url }));
+      toast.success('Cover image uploaded');
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -173,13 +178,14 @@ const AdminCategories = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={e => { const f = e.target.files?.[0]; if (f) handleCover(f); }}
+                  disabled={uploading}
+                  onChange={e => { const f = e.target.files?.[0]; e.currentTarget.value = ''; if (f) void handleCover(f); }}
                   className="w-full text-sm text-muted-foreground"
                 />
                 {uploading && <p className="text-xs text-gold">Uploading…</p>}
               </div>
               <div className="flex gap-4">
-                <button type="submit" className="btn-gold flex-1">{editingCategory ? 'Update' : 'Add'}</button>
+                <button type="submit" className="btn-gold flex-1" disabled={uploading}>{editingCategory ? 'Update' : 'Add'}</button>
                 <button type="button" onClick={() => { setShowForm(false); setEditingCategory(null); }} className="btn-outline-gold">Cancel</button>
               </div>
             </form>

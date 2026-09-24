@@ -1,4 +1,4 @@
-import { mediaUrl } from '@/lib/media';
+import { uploadMedia } from '@/lib/media';
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from "@/lib/router-compat";
 import { motion } from 'framer-motion';
@@ -61,42 +61,41 @@ const AdminDashboard = () => {
     setLoading(false);
   };
 
-  const handleFileUpload = useCallback(async (files: FileList, type: 'images' | 'videos') => {
+  const handleFileUpload = useCallback(async (files: FileList | File[], type: 'images' | 'videos') => {
     setUploading(true);
     const urls: string[] = [];
-    
-    for (const file of Array.from(files)) {
-      const validation = validateMediaFile(file, type);
-      if (!validation.valid) {
-        toast.error(validation.error);
-        continue;
+
+    try {
+      for (const file of Array.from(files)) {
+        const validation = validateMediaFile(file, type);
+        if (!validation.valid) {
+          toast.error(validation.error);
+          continue;
+        }
+
+        try {
+          const { url } = await uploadMedia(file, type);
+          urls.push(url);
+        } catch (err) {
+          toast.error(`Failed to upload ${file.name}: ${(err as Error).message}`);
+        }
       }
-      
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      const path = `${type}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from('product-media').upload(path, file, {
-        contentType: file.type,
-      });
-      if (!error) {
-        const data = { publicUrl: await mediaUrl(path) };
-        urls.push(data.publicUrl);
-      } else {
-        toast.error(`Failed to upload ${file.name}: ${error.message}`);
+
+      setForm(f => ({ ...f, [type]: [...f[type], ...urls] }));
+
+      if (urls.length > 0) {
+        toast.success(`${urls.length} ${type} uploaded!`);
+        // Stats only — never block the upload on this.
+        const { error: statsError } = await supabase.from('daily_uploads').upsert({
+          upload_date: new Date().toISOString().split('T')[0],
+          count: dailyUploads + urls.length
+        }, { onConflict: 'upload_date' });
+        if (statsError) console.warn('Could not update daily upload count:', statsError.message);
+        setDailyUploads(d => d + urls.length);
       }
+    } finally {
+      setUploading(false);
     }
-    
-    setForm(f => ({ ...f, [type]: [...f[type], ...urls] }));
-    
-    if (urls.length > 0) {
-      await supabase.from('daily_uploads').upsert({ 
-        upload_date: new Date().toISOString().split('T')[0], 
-        count: dailyUploads + urls.length 
-      }, { onConflict: 'upload_date' });
-      setDailyUploads(d => d + urls.length);
-      toast.success(`${urls.length} ${type} uploaded!`);
-    }
-    
-    setUploading(false);
   }, [dailyUploads]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -366,12 +365,12 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-foreground mb-2"><Image className="w-4 h-4 inline mr-1" />Images (bulk)</label>
-                  <input type="file" multiple accept="image/*" onChange={e => e.target.files && handleFileUpload(e.target.files, 'images')} className="w-full text-sm text-muted-foreground file:btn-gold file:mr-2 file:!py-1 file:!px-3" disabled={uploading} />
+                  <input type="file" multiple accept="image/*" onChange={e => { const f = e.target.files ? Array.from(e.target.files) : []; e.currentTarget.value = ''; if (f.length) void handleFileUpload(f, 'images'); }} className="w-full text-sm text-muted-foreground file:btn-gold file:mr-2 file:!py-1 file:!px-3" disabled={uploading} />
                   <div className="flex flex-wrap gap-2 mt-2">{form.images.map((img, i) => <img key={i} src={img} className="w-12 h-12 object-cover rounded" />)}</div>
                 </div>
                 <div>
                   <label className="block text-sm text-foreground mb-2"><Video className="w-4 h-4 inline mr-1" />Videos (bulk)</label>
-                  <input type="file" multiple accept="video/*" onChange={e => e.target.files && handleFileUpload(e.target.files, 'videos')} className="w-full text-sm text-muted-foreground file:btn-gold file:mr-2 file:!py-1 file:!px-3" disabled={uploading} />
+                  <input type="file" multiple accept="video/*" onChange={e => { const f = e.target.files ? Array.from(e.target.files) : []; e.currentTarget.value = ''; if (f.length) void handleFileUpload(f, 'videos'); }} className="w-full text-sm text-muted-foreground file:btn-gold file:mr-2 file:!py-1 file:!px-3" disabled={uploading} />
                   <div className="text-xs text-muted-foreground mt-1">{form.videos.length} videos uploaded</div>
                 </div>
               </div>

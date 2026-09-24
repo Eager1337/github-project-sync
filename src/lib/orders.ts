@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { createOrder, listOrders } from './orders.functions';
 
 const TOKEN_KEY = 'haamkay_guest_token';
 const DETAILS_KEY = 'haamkay_customer_details';
@@ -60,18 +60,17 @@ export function saveCustomerDetails(details: CustomerDetails) {
 
 /** Creates a real order in the shop's system. Throws with a readable message on failure. */
 export async function placeOrder(details: CustomerDetails, items: OrderItem[]): Promise<Order> {
-  const { data, error } = await supabase.functions.invoke('orders', {
-    body: { action: 'create', guest_token: guestToken(), ...details, items },
-  });
-  if (error) throw new Error(error.message || 'Could not send your order. Please try again.');
-  if (data?.error) throw new Error(data.error);
-  return data.order as Order;
+  try {
+    return (await createOrder({ data: { guest_token: guestToken(), ...details, items } })) as unknown as Order;
+  } catch (e) {
+    throw new Error(e instanceof Error ? e.message : 'Could not send your order. Please try again.');
+  }
 }
 
 export async function listMyOrders(): Promise<Order[]> {
-  const { data, error } = await supabase.functions.invoke('orders', {
-    body: { action: 'list', guest_token: guestToken() },
-  });
-  if (error || data?.error) return [];
-  return (data?.orders ?? []) as Order[];
+  try {
+    return (await listOrders({ data: { guest_token: guestToken() } })) as unknown as Order[];
+  } catch {
+    return [];
+  }
 }

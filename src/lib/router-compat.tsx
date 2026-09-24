@@ -32,7 +32,7 @@ export function useNavigate() {
 }
 
 export function useParams<T extends Record<string, string> = Record<string, string>>(): Partial<T> {
-  return useTanstackParams({ strict: false }) as Partial<T>;
+  return (useTanstackParams as any)({ strict: false }) as Partial<T>;
 }
 
 export function useSearchParams(): [URLSearchParams, (next: URLSearchParams | string) => void] {

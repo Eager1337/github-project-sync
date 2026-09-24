@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { recommendProducts } from '@/lib/ai.functions';
 
-type Result = Awaited<ReturnType<typeof recommendProducts>>;
+type Result = NonNullable<Awaited<ReturnType<typeof recommendProducts>>['data']>;
 
 const examples = ['A gift for my wife under Le 500,000', 'Office shoes size 43', 'An outfit for a wedding this weekend'];
 
@@ -21,7 +21,9 @@ const AiShopperSection = () => {
     if (q.trim().length < 3) return;
     setLoading(true); setError(null); setResult(null);
     try {
-      setResult(await recommend({ data: { query: q } }));
+      const res = await recommend({ data: { query: q } });
+      if (res.error || !res.data) setError(res.error ?? 'No suggestions right now.');
+      else setResult(res.data);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
     } finally {

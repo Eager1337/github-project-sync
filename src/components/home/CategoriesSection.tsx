@@ -33,7 +33,7 @@ const CategoriesSection = () => {
       .order('name');
 
     if (!error && data) {
-      setCategories(data);
+      setCategories(data as any);
     }
   };
 

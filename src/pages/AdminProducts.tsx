@@ -69,7 +69,7 @@ const AdminProducts = () => {
       supabase.from('products').select('*').order('created_at', { ascending: false }),
       supabase.from('categories').select('name')
     ]);
-    if (prods) setProducts(prods);
+    if (prods) setProducts(prods as any);
     if (cats) setCategories(cats.map(c => c.name));
     setLoading(false);
   };

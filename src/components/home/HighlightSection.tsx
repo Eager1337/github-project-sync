@@ -30,7 +30,7 @@ const HighlightSection = () => {
       .maybeSingle();
 
     if (!error && data) {
-      setHighlight(data);
+      setHighlight(data as any);
     }
     setLoading(false);
   };

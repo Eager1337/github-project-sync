@@ -9,6 +9,15 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
+import { UserProvider } from "@/contexts/UserContext";
+import { CartProvider } from "@/contexts/CartContext";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotificationToaster from "@/components/NotificationToaster";
+import AnalyticsProvider from "@/components/AnalyticsProvider";
+import ScrollToTop from "@/components/ScrollToTop";
+import NotFound from "@/pages/NotFound";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -77,14 +86,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { title: "Haamkay Enterprises" },
+      { name: "description", content: "Luxury fashion and retail in Freetown, Sierra Leone." },
+      { name: "theme-color", content: "#0f3b3a" },
     ],
     links: [
       {
@@ -92,11 +96,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  notFoundComponent: NotFoundComponent,
+  notFoundComponent: NotFound,
   errorComponent: ErrorComponent,
 });
 
@@ -116,11 +121,26 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <TooltipProvider>
+        <AdminAuthProvider>
+          <UserProvider>
+            <CartProvider>
+              <ScrollToTop />
+              <NotificationToaster />
+              <AnalyticsProvider />
+              <Outlet />
+              <Toaster />
+            </CartProvider>
+          </UserProvider>
+        </AdminAuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

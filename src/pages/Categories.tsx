@@ -78,7 +78,7 @@ const Categories = () => {
                 Results for “{query}” ({filteredProducts.length})
               </span>
               <button
-                onClick={() => setSearchParams({})}
+                onClick={() => setSearchParams('')}
                 className="px-3 py-1 rounded-full bg-muted text-foreground hover:bg-gold/20 transition-colors"
               >
                 Clear

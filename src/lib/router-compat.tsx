@@ -11,7 +11,7 @@ export function useLocation() {
     pathname: location.pathname,
     search: location.searchStr ?? "",
     hash: location.hash ?? "",
-    state: (location.state ?? {}) as Record<string, unknown>,
+    state: (location.state ?? {}) as unknown as Record<string, unknown>,
     key: location.href,
   };
 }
@@ -32,7 +32,7 @@ export function useNavigate() {
 }
 
 export function useParams<T extends Record<string, string> = Record<string, string>>(): Partial<T> {
-  return useTanstackParams({ strict: false }) as Partial<T>;
+  return (useTanstackParams as any)({ strict: false }) as Partial<T>;
 }
 
 export function useSearchParams(): [URLSearchParams, (next: URLSearchParams | string) => void] {

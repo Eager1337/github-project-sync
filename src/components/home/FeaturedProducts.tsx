@@ -32,7 +32,7 @@ const FeaturedProducts = () => {
       .limit(8);
 
     if (!error && data) {
-      setProducts(data);
+      setProducts(data as any);
     }
     setLoading(false);
   };

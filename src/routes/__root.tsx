@@ -18,6 +18,7 @@ import NotificationToaster from "@/components/NotificationToaster";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import ScrollToTop from "@/components/ScrollToTop";
 import NotFound from "@/pages/NotFound";
+import AiChatWidget from "@/components/ai/AiChatWidget";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -136,6 +137,7 @@ function RootComponent() {
               <NotificationToaster />
               <AnalyticsProvider />
               <Outlet />
+              <AiChatWidget />
               <Toaster />
             </CartProvider>
           </UserProvider>

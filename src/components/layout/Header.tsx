@@ -7,6 +7,7 @@ import NotificationBell from '@/components/NotificationBell';
 
 const navLinks = [
   { name: 'Home', path: '/' },
+  { name: 'AI Finder', path: '/ai-shopper' },
   { name: 'Categories', path: '/categories' },
   { name: 'Daily Drops', path: '/daily-drops' },
   { name: 'Trending', path: '/trending' },

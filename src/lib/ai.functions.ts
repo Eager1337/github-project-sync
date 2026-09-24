@@ -56,7 +56,7 @@ const DraftSchema = z.object({
 
 export const aiProductDraft = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ images: z.array(imageUrl).min(1).max(20), categories: z.array(z.string()).max(100) }).parse(d))
+  .validator((d: unknown) => z.object({ images: z.array(imageUrl).min(1).max(20), categories: z.array(z.string()).max(100) }).parse(d))
   .handler(async ({ data, context }) =>
     wrap(async () => {
       await assertAdmin(context);
@@ -107,7 +107,7 @@ const ENHANCE =
 
 export const aiImageStudio = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ imageUrl, mode: z.enum(["enhance", "edit"]).catch("enhance"), prompt: z.string().max(2000).optional() }).parse(d),
   )
   .handler(async ({ data, context }) =>
@@ -122,7 +122,7 @@ export const aiImageStudio = createServerFn({ method: "POST" })
 
 export const aiImageUpscale = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ imageUrl }).parse(d))
+  .validator((d: unknown) => z.object({ imageUrl }).parse(d))
   .handler(async ({ data, context }) =>
     wrap(async () => {
       await assertAdmin(context);
@@ -134,7 +134,7 @@ export const aiImageUpscale = createServerFn({ method: "POST" })
 // ---------- Team bio ----------
 export const aiTeamBio = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ name: z.string().min(1).max(120), role: z.string().max(120).optional(), notes: z.string().max(1000).optional() }).parse(d))
+  .validator((d: unknown) => z.object({ name: z.string().min(1).max(120), role: z.string().max(120).optional(), notes: z.string().max(1000).optional() }).parse(d))
   .handler(async ({ data, context }) =>
     wrap(async () => {
       await assertAdmin(context);
@@ -158,7 +158,7 @@ const RecSchema = z.object({
 });
 
 export const recommendProducts = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ query: z.string().trim().min(3).max(500) }).parse(d))
+  .validator((d: unknown) => z.object({ query: z.string().trim().min(3).max(500) }).parse(d))
   .handler(async ({ data }) =>
     wrap(async () => {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

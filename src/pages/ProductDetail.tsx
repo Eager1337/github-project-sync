@@ -10,6 +10,7 @@ import TikTokEmbed from '@/components/TikTokEmbed';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/home/ProductCard';
+import Seo from '@/components/seo/Seo';
 
 interface Product {
   id: string;
@@ -114,6 +115,25 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title={`${product.name} | Haamkay Enterprises`}
+        description={(product.description || `Shop ${product.name} in ${product.category} at Haamkay Enterprises, Freetown. Price Le ${product.price.toLocaleString()}.`).slice(0, 160)}
+        path={`/product/${product.id}`}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.name,
+          category: product.category,
+          description: product.description || undefined,
+          image: images,
+          offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'SLL',
+            availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          },
+        }}
+      />
       <Header />
       <main className="pt-28 md:pt-40 pb-32 md:pb-20">
         <div className="container mx-auto px-4 md:px-6">

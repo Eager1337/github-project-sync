@@ -55,7 +55,7 @@ const AdminDashboard = () => {
       supabase.from('categories').select('name'),
       supabase.from('daily_uploads').select('count').eq('upload_date', new Date().toISOString().split('T')[0]).maybeSingle()
     ]);
-    if (prods as any) setProducts(prods);
+    if (prods as any ?? []) setProducts(prods);
     if (cats) setCategories(cats.map(c => c.name));
     if (uploads) setDailyUploads(uploads.count);
     setLoading(false);

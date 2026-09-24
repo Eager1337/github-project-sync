@@ -3,10 +3,8 @@ import { useNavigate } from "@/lib/router-compat";
 import { motion } from 'framer-motion';
 import { Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import { useAdminAuth, ADMIN_EMAIL_DOMAIN } from '@/contexts/AdminAuthContext';
 import { adminLoginSchema, validateForm } from '@/lib/validations';
-
-export const ADMIN_EMAIL_DOMAIN = 'haamkay.app';
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('');

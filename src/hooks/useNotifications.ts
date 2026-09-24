@@ -15,7 +15,8 @@ const READ_KEY = 'haamkay-notifications-read-at';
 
 export function useNotifications() {
   const [items, setItems] = useState<SiteNotification[]>([]);
-  const [readAt, setReadAt] = useState<string>(() => localStorage.getItem(READ_KEY) ?? '1970-01-01');
+  const [readAt, setReadAt] = useState<string>('1970-01-01');
+  useEffect(() => { setReadAt(localStorage.getItem(READ_KEY) ?? '1970-01-01'); }, []);
 
   const load = useCallback(async () => {
     const { data } = await supabase

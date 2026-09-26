@@ -32,7 +32,7 @@ export function createLovableAiGatewayRunIdFetch(initialRunId?: string) {
   };
 }
 
-export function responsesModel() {
+export function textModel() {
   const key = getKey();
   const runIdFetch = createLovableAiGatewayRunIdFetch();
   const lovable = createOpenAI({
@@ -41,16 +41,22 @@ export function responsesModel() {
     headers: { "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
     fetch: runIdFetch.fetch,
   });
-  return lovable.responses(TEXT_MODEL);
+  // The Lovable AI gateway is OpenAI **Chat Completions** compatible
+  // (POST /v1/chat/completions). It does NOT expose the OpenAI Responses API
+  // (POST /v1/responses), so we must use the chat model here. Using
+  // `.responses()` sends requests to an endpoint the gateway does not serve,
+  // which is what made every text AI tool fail with a generic error.
+  return lovable.chat(TEXT_MODEL);
 }
 
+/**
+ * Provider options for the chat-completions endpoint. Only chat-compatible keys
+ * are used here; Responses-API-only options (`reasoningSummary`, `store`,
+ * `include`, `forceReasoning`) would be rejected by the chat endpoint.
+ */
 export const reasoningOptions = {
   openai: {
-    forceReasoning: true,
     reasoningEffort: "low",
-    reasoningSummary: "auto",
-    store: false,
-    include: ["reasoning.encrypted_content"],
   },
 } as const;
 

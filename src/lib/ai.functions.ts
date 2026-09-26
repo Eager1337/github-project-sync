@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { streamText, Output } from "ai";
 import { z } from "zod";
-import { AiError, editImage, friendlyAiError, reasoningOptions, responsesModel } from "./ai-gateway.server";
+import { AiError, editImage, friendlyAiError, reasoningOptions, textModel } from "./ai-gateway.server";
 
 type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: unknown }> }; userId: string };
 
@@ -64,7 +64,7 @@ export const aiProductDraft = createServerFn({ method: "POST" })
         data.images.map(async (image) => {
           try {
             const result = streamText({
-              model: responsesModel(),
+              model: textModel(),
               system:
                 "You are a product listing assistant for Haamkay Enterprises, a luxury retail store in Freetown, Sierra Leone. Prices are in Sierra Leonean Leones (Le). Look at the product photo and produce a complete, ready-to-publish listing. Be concrete: no placeholders. Estimate a realistic retail price in Leones. Include visible or typical sizes and colours. Up to 8 tags. Confidence is 0-1.",
               messages: [
@@ -139,7 +139,7 @@ export const aiTeamBio = createServerFn({ method: "POST" })
     wrap(async () => {
       await assertAdmin(context);
       const result = streamText({
-        model: responsesModel(),
+        model: textModel(),
         system:
           "You write short, warm, professional team bios for Haamkay Enterprises, a luxury retail store in Freetown, Sierra Leone. 2-3 sentences, third person, no placeholders.",
         prompt: `Name: ${data.name}\nRole: ${data.role || "Team member"}\nNotes: ${data.notes || "none"}\n\nWrite the bio only.`,
@@ -177,7 +177,7 @@ export const recommendProducts = createServerFn({ method: "POST" })
         .join("\n");
 
       const result = streamText({
-        model: responsesModel(),
+        model: textModel(),
         system:
           "You are a friendly personal shopper for Haamkay Enterprises in Freetown, Sierra Leone. Recommend only products from the catalogue provided, using their exact ids. Pick up to 6 of the most relevant items, best first. Each reason is one or two sentences explaining why it fits the shopper's need (mention size, colour, price or occasion when useful). The summary is one short friendly sentence. If nothing fits, return no picks and say so kindly in the summary. Prices are in Leones.",
         prompt: `Shopper request: ${data.query}\n\nCatalogue (id | name | category | price | sizes | colours | description):\n${catalog}`,

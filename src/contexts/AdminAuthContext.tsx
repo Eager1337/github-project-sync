@@ -100,34 +100,50 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  const adoptSession = async (nextSession: Session | null, nextUser: User | null) => {
+    if (!nextUser) return { error: null };
+
+    const adminStatus = await checkAdminRole(nextUser.id);
+    if (!adminStatus) {
+      await supabase.auth.signOut();
+      return { error: new Error('Access denied. You do not have admin privileges.') };
+    }
+    setSession(nextSession);
+    setUser(nextUser);
+    setIsAdmin(true);
+    setIsLoading(false);
+    return { error: null };
+  };
+
   const signIn = async (email: string, password: string) => {
     try {
-      let result = await supabase.auth.signInWithPassword({ email, password });
+      // Try a normal browser sign-in first (in case a real session already
+      // exists for a non-built-in account).
+      const result = await supabase.auth.signInWithPassword({ email, password });
 
-      // First sign-in for the built-in admin (or its password was changed):
-      // have the server create/repair the account, then try again.
+      // For the built-in admin the typed password is NOT the account's Supabase
+      // password (that is derived on the server), so a direct sign-in fails with
+      // invalid credentials. Have the server set up / repair the account, sign
+      // in with the derived password, and hand back session tokens which we
+      // adopt here via `supabase.auth.setSession(tokens)`.
       if (result.error && isInvalidCredentials(result.error.message)) {
         const setup = await ensureAdminAccount({ data: { email, password } });
+
+        // The server surfaces the failing step + the real Supabase error.
         if (setup.error) return { error: new Error(setup.error) };
-        if (setup.ok) result = await supabase.auth.signInWithPassword({ email, password });
+        if (!setup.ok || !setup.tokens) return { error: result.error };
+
+        const { data: sessionData, error: sessionError } = await supabase.auth.setSession(
+          setup.tokens,
+        );
+        if (sessionError) return { error: sessionError };
+
+        return adoptSession(sessionData.session, sessionData.user);
       }
 
       if (result.error) return { error: result.error };
 
-      const signedInUser = result.data.user;
-      if (signedInUser) {
-        const adminStatus = await checkAdminRole(signedInUser.id);
-        if (!adminStatus) {
-          await supabase.auth.signOut();
-          return { error: new Error('Access denied. You do not have admin privileges.') };
-        }
-        setSession(result.data.session);
-        setUser(signedInUser);
-        setIsAdmin(true);
-        setIsLoading(false);
-      }
-
-      return { error: null };
+      return adoptSession(result.data.session, result.data.user);
     } catch (err) {
       return { error: err instanceof Error ? err : new Error('Sign in failed. Please try again.') };
     }
